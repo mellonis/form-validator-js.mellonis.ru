@@ -1,0 +1,29 @@
+{
+  "name": "form-validator-js.mellonis.ru",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel src/index.html",
+    "build": "parcel build src/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mellonis/form-validator-js.mellonis.ru.git"
+  },
+  "author": "Ruslan Gilmullin <mellonis@yandex.ru>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mellonis/form-validator-js.mellonis.ru/issues"
+  },
+  "homepage": "https://github.com/mellonis/form-validator-js.mellonis.ru#readme",
+  "dependencies": {
+    "@form-validator-js/core": "0.0.2-alpha.2",
+    "@form-validator-js/validators": "0.0.2-alpha.2",
+    "parcel-bundler": "^1.12.4"
+  },
+  "devDependencies": {
+    "sass": "^1.26.10"
+  }
+}

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>form-validator-js Demo</title>
+  <link rel="stylesheet" href="styles/main.scss">
+  <script type="module" src="main.js"></script>
+</head>
+<body>
+<form class="form">
+  <div class="form__row">
+    <label for="login" class="form__key">Login</label>
+    <div class="form__value">
+      <input class="form__input" type="text" id="login" name="login" data-validation="required">
+      <ul class="error-list"></ul>
+    </div>
+  </div>
+  <div class="form__row">
+    <label for="password" class="form__key">Password</label>
+    <div class="form__value">
+      <input class="form__input" type="password" id="password" name="password" data-validation="required">
+      <ul class="error-list"></ul>
+    </div>
+  </div>
+  <div class="form__row">
+    <label for="passwordConfirmation" class="form__key">Confirmation</label>
+    <div class="form__value">
+      <input class="form__input" type="password" id="passwordConfirmation" name="passwordConfirmation" data-validation="equalsTo(password)">
+      <ul class="error-list"></ul>
+    </div>
+  </div>
+  <div class="form__row form__row_buttons">
+    <button class="button">Sign Up</button>
+  </div>
+</form>
+</body>
+</html>

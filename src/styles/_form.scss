@@ -1,0 +1,43 @@
+@use 'theme' as theme;
+
+.form {
+  $key-width: 35%;
+
+  width: 420px;
+
+  &__row {
+    display: flex;
+
+    &:not(:last-of-type) {
+      padding-bottom: 8px;
+    }
+
+    &_buttons {
+      padding-left: $key-width;
+    }
+  }
+
+  &__key {
+    flex-basis: $key-width;
+    padding: 8px;
+    text-align: right;
+  }
+
+  &__value {
+    display: flex;
+    flex-basis: 100% - $key-width;
+    flex-direction: column;
+  }
+
+  &__input {
+    border-color: theme.$color3;
+    border-radius: 5px;
+    border-style: solid;
+    padding: 8px;
+
+    &_error {
+      background-color: theme.$color2;
+      border-color: theme.$color2;
+    }
+  }
+}

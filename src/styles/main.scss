@@ -1,0 +1,19 @@
+@use 'theme' as theme;
+@use 'button';
+@use 'error-list';
+@use 'form';
+
+body {
+  align-items: center;
+  background-color: theme.$color1;
+  color: theme.$color3;
+  display: flex;
+  font-family: sans-serif;
+  height: 100vh;
+  justify-content: center;
+}
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+}

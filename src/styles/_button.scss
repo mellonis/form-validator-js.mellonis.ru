@@ -1,0 +1,13 @@
+@use 'theme' as theme;
+
+.button {
+  background-color: theme.$color3;
+  border-radius: 8px;
+  border-width: 0;
+  color: theme.$color1;
+  padding: 8px;
+
+  &:active {
+    background-color: theme.$color2;
+  }
+}

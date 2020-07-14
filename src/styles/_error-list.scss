@@ -1,0 +1,13 @@
+@use 'theme' as theme;
+
+.error-list {
+  color: theme.$color2;
+  font-style: italic;
+  font-size: .875rem;
+  list-style: none;
+  padding: 2px 0 0 0;
+
+  &__item {
+    padding: 2px;
+  }
+}
