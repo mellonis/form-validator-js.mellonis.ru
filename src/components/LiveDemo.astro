@@ -1,0 +1,105 @@
+---
+import CodeBlock from '~/components/CodeBlock.astro';
+
+interface Props {
+  formHtml: string;
+  jsSource: string;
+  jsFilename?: string;
+  htmlFilename?: string;
+}
+const { formHtml, jsSource, jsFilename = 'demo.ts', htmlFilename = 'index.html' } = Astro.props;
+---
+<section class="live-demo container-wide">
+  <div class="live-demo-grid">
+    <div class="form-pane">
+      <header class="pane-header">
+        <span class="label">Live form</span>
+        <button type="button" class="reset-btn secondary">Reset</button>
+      </header>
+      <div class="form-host" set:html={formHtml} />
+    </div>
+    <div class="code-pane-stack">
+      <CodeBlock lang="html" code={formHtml} filename={htmlFilename} />
+      <CodeBlock lang="ts" code={jsSource} filename={jsFilename} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .live-demo {
+    margin: var(--space-6) auto;
+  }
+  .live-demo-grid {
+    display: grid;
+    /* minmax(0, 1fr) constrains the column to the container width, so the
+       code <pre>'s overflow-x: auto actually kicks in instead of the column
+       growing to fit a long code line and pushing the page wider. */
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+  @media (min-width: 900px) {
+    .live-demo-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--space-4);
+    }
+  }
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-2);
+  }
+  .form-host {
+    border: 1px solid var(--rule);
+    padding: var(--space-3);
+    background: var(--bg-elev);
+  }
+  .form-host :global(form) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .form-host :global(label) {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .form-host :global(input),
+  .form-host :global(textarea),
+  .form-host :global(select) {
+    width: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--rule);
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    border-radius: 0;
+  }
+  .form-host :global(input:focus),
+  .form-host :global(textarea:focus),
+  .form-host :global(select:focus) {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+  }
+  .form-host :global(button[type="submit"]) {
+    align-self: flex-start;
+  }
+  .reset-btn {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.reset-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const form = btn.closest('.live-demo')?.querySelector('form');
+      if (form instanceof HTMLFormElement) form.reset();
+    });
+  });
+</script>

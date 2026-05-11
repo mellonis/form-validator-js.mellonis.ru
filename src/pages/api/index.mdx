@@ -1,0 +1,109 @@
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import ThemeToggle from '~/components/ThemeToggle.astro';
+import TriggerComparison from '~/components/TriggerComparison.astro';
+
+<DocsLayout title="API — form-validator-js">
+  <ThemeToggle slot="theme-toggle" />
+
+# API
+
+## `new FormValidator(params)`
+
+The single entry point. Constructing it sets `novalidate` on the form, attaches event listeners, and (by default) starts managing `setCustomValidity` and `aria-invalid` on every form control.
+
+```ts
+import { FormValidator } from '@form-validator-js/core';
+new FormValidator({ form, validatorDeclarations, onErrorMessageListChanged, /* ... */ });
+```
+
+## Parameters
+
+| Param | Type | Default | Notes |
+|---|---|---|---|
+| `form` | `HTMLFormElement` | — | The form to attach to. |
+| `validatorDeclarations` | `Record<string, ValidatorDeclaration>` | — | Map of validator name → declaration. The keys are the names referenced in `data-validation`. See [Validator declaration](#validator-declaration). |
+| `onErrorMessageListChanged` | `(target: Element, messages: string[], errors: ErrorDetail[]) => void` | no-op | Called per affected element when its error list changes. `messages` and `errors` are parallel arrays. Render however you like — the engine doesn't render. |
+| `trigger` | `'input' \| 'blur' \| 'blur-then-input' \| 'submit-only'` | `'blur-then-input'` | Default trigger mode. Per-field overrides via `data-validation-trigger="…"`. |
+| `manageValidity` | `boolean` | `true` | If true, calls `target.setCustomValidity(messages.join('\n'))` for each form control. |
+| `reportValidityOnSubmit` | `boolean` | `false` | If true, calls `form.reportValidity()` after `preventDefault` on an invalid submit. |
+| `onPendingChange` | `(element: Element, isPending: boolean) => void` | no-op | **1.1.0** — fires when an async validator starts / finishes for that element. Used to show "Checking…" UI. |
+| `onFormPendingChange` | `(isPending: boolean) => void` | no-op | **1.1.0** — fires when the form transitions between "any async in flight" and "all settled". Used to disable submit buttons. |
+
+`ErrorDetail` is `{ validatorName: string; subtype: string; message: string; isContextError: boolean }` — same length and order as `messages`. The reserved subtype `'error'` signals an async failure (Promise rejected); map it via `errorMessage: { error: 'Could not verify, try again' }`.
+
+For full details on timing and the platform integration, see the library's [CLAUDE.md](https://github.com/mellonis/form-validator-js/blob/master/CLAUDE.md).
+
+## Validator declaration
+
+```ts
+type ValidatorDeclaration = {
+  init: (target, options) => FormValidatorInitResult;
+  validate: (target, data, options) =>
+    | FormValidatorValidationResult
+    | Promise<FormValidatorValidationResult>;  // 1.1.0 — Promise allowed
+  errorMessage?: string | { [subtype: string]: string };
+  onError?: (err: unknown) => FormValidatorValidationResult;  // 1.1.0 — custom failure mapping
+};
+```
+
+`validate`'s third argument is `{ signal: AbortSignal }`. Sync validators ignore it; async ones honour it so the engine can cancel stale checks (e.g. when the user types another character before the previous server check resolves). The library detects async by `instanceof Promise` on the return value — no constructor option to "enable async".
+
+`onError` is invoked when the Promise rejects with anything other than an `AbortError`. Return a `FormValidatorValidationResult` to customise what the user sees; omit it and the engine emits the reserved `'error'` subtype with a default message.
+
+## Methods
+
+- **`destroy()`** — removes all listeners and clears internal maps. Idempotent. The `novalidate` and `data-validation-context="*"` attributes the constructor set on the form are intentionally left in place.
+- **`addValidators(declarations)`** — register additional validators after construction.
+- **`updateValidationParameters(elementSelector, validatorName, argumentString)`** — re-run a validator's `init` with new arguments.
+- **`elementToSpecificErrorMessageMap`** — facade with `.set(element, msgs)` / `.delete(element)` / `.clear()`. Lets you override error messages per field.
+- **`retry(element, validatorName?)`** — **1.1.0** — re-runs a failed async validator. With no `validatorName` argument, retries every failed async on the element. Useful for "Try again" buttons in error UIs.
+
+## Static helpers
+
+- **`FormValidator.createValidateEvent({ data? })`** — returns a custom `Event` you can dispatch on a field to manually trigger validation. Pass `data` with `{ validatorName: result }` to inject precomputed results (handy for client-cached server results, web-worker output, or test fixtures).
+
+## Trigger modes
+
+Four modes. The default is `'blur-then-input'` — validates on focus loss, then continuously on input once a field has been shown an error.
+
+<TriggerComparison />
+
+## Async validation
+
+**New in 1.1.0.** Return a `Promise<FormValidatorValidationResult>` from your validator's `validate` function and the engine handles the rest:
+
+- **Submit-time blocking.** If the user submits while async work is in flight, the engine awaits, then programmatically re-submits if everything resolves valid.
+- **Race-by-latest correctness.** A stale Promise resolving after a newer input change cannot corrupt state.
+- **Cancellation.** The `options.signal` AbortSignal is aborted when a new validation cycle starts; honour it in your `fetch` call (or wrap a timer) so stale checks stop cleanly.
+- **Pending UX.** `onPendingChange` and `onFormPendingChange` callbacks let you toggle "Checking…" indicators and disable the submit button without polling.
+- **Failure mapping.** Promise rejections emit the reserved `'error'` subtype by default; override per validator via `onError`.
+
+See [Async username](/examples/async) for a runnable example with the AbortSignal wired in.
+
+The legacy injection pattern — dispatching `FormValidator.createValidateEvent({ data: { validatorName: result } })` from outside the validator — still works and is the right tool when the result comes from somewhere the validator can't reach (a global cache, a worker, a parent component).
+
+## Lifecycle
+
+The validator stops doing anything after `destroy()`. The `novalidate` attribute and `data-validation-context="*"` set on the form during construction are intentionally left in place — removing them risks clobbering attributes a consumer set independently. Same for `aria-invalid` and `aria-busy` (1.1.0, set during in-flight async) on form controls.
+
+## Custom validators
+
+```ts
+import {
+  FormValidatorInitResult,
+  FormValidatorValidationResult,
+  type ValidatorDeclaration,
+} from '@form-validator-js/core';
+
+const noWhitespace: ValidatorDeclaration = {
+  init: (target) => new FormValidatorInitResult({ observableElementList: [target] }),
+  validate: (target) => new FormValidatorValidationResult({
+    isValid: !/\s/.test((target as HTMLInputElement).value),
+  }),
+  errorMessage: 'Cannot contain whitespace',
+};
+```
+
+For multi-rule validators using `validatorSubtypeList`, see [`@form-validator-js/core` README](https://github.com/mellonis/form-validator-js/tree/master/packages/core#multiple-rules-in-one-validator-subtypes).
+
+</DocsLayout>

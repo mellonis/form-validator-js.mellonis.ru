@@ -1,0 +1,63 @@
+---
+import CodeBlock from '~/components/CodeBlock.astro';
+
+interface Props {
+  name: string;       // e.g. "required"
+  dsl: string;        // e.g. "required" or "minLength(3)"
+  argument?: string;  // e.g. "min character count" — undefined for argument-less
+  supports: string;   // human description of supported input types
+  htmlExample: string;
+}
+const { name, dsl, argument, supports, htmlExample } = Astro.props;
+---
+<article class="validator-card" id={name}>
+  <header class="validator-head">
+    <h3>
+      <a href={`#${name}`}><code>{name}</code></a>
+    </h3>
+    <p class="dsl"><code>{dsl}</code></p>
+  </header>
+  <dl class="validator-meta">
+    {argument && <><dt>Argument</dt><dd>{argument}</dd></>}
+    <dt>Supports</dt>
+    <dd>{supports}</dd>
+  </dl>
+  <slot /> {/* description prose */}
+  <CodeBlock lang="html" code={htmlExample} filename="example.html" />
+</article>
+
+<style>
+  .validator-card {
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .validator-card:last-child { border-bottom: 0; }
+  .validator-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+  .validator-head h3 a {
+    color: var(--fg);
+    text-decoration: none;
+  }
+  .validator-head h3 a:hover { color: var(--accent); }
+  .dsl { font-family: var(--font-mono); color: var(--muted); margin: 0; }
+  .validator-meta {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 4px var(--space-2);
+    margin: var(--space-1) 0 var(--space-2);
+    font-size: 0.875rem;
+  }
+  .validator-meta dt {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .validator-meta dd { margin: 0; }
+</style>

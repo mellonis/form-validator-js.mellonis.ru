@@ -1,0 +1,58 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import ThemeToggle from '~/components/ThemeToggle.astro';
+import LiveDemo from '~/components/LiveDemo.astro';
+import jsSource from '~/components/demos/signup.demo.ts?raw';
+
+const formHtml = `<form id="signup-form" novalidate>
+  <div>
+    <label for="signup-email">Email</label>
+    <input id="signup-email" name="email" type="email"
+           data-validation="required;pattern([^@\\s]+@[^@\\s]+\\.[^@\\s]+)" />
+    <ul class="error-list"></ul>
+  </div>
+  <div>
+    <label for="signup-username">Username</label>
+    <input id="signup-username" name="username" type="text"
+           data-validation="required;minLength(3)" />
+    <ul class="error-list"></ul>
+  </div>
+  <div>
+    <label for="signup-password">Password</label>
+    <input id="signup-password" name="password" type="password"
+           data-validation="required;minLength(8);pattern(.*\\d.*)" />
+    <ul class="error-list"></ul>
+  </div>
+  <div>
+    <label for="signup-confirm">Confirm password</label>
+    <input id="signup-confirm" name="confirm" type="password"
+           data-validation="required;equalsTo(signup-password)" />
+    <ul class="error-list"></ul>
+  </div>
+  <button type="submit">Create account</button>
+</form>`;
+---
+<DocsLayout title="Sign up — form-validator-js" fullBleed>
+  <ThemeToggle slot="theme-toggle" />
+  <section class="container-wide page-header">
+    <p class="label">Example</p>
+    <h1>Sign up</h1>
+    <p class="muted lede">
+      Required fields, length and pattern checks, cross-field equality. The classic.
+      Validators stressed: <code>required</code>, <code>minLength</code>, <code>pattern</code>, <code>equalsTo</code>.
+    </p>
+  </section>
+  <LiveDemo formHtml={formHtml} jsSource={jsSource} jsFilename="signup.demo.ts" htmlFilename="signup.html" />
+  <script>
+    import '~/components/demos/signup.demo';
+  </script>
+</DocsLayout>
+
+<style>
+  .page-header {
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-2);
+  }
+  .page-header h1 { margin-bottom: var(--space-2); }
+  .page-header .lede { max-width: 64ch; }
+</style>

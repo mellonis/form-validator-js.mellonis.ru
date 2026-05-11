@@ -1,0 +1,43 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import ThemeToggle from '~/components/ThemeToggle.astro';
+import Hero from '~/components/Hero.astro';
+import WhenThisFits from '~/components/WhenThisFits.astro';
+import LiveDemo from '~/components/LiveDemo.astro';
+import jsSource from '~/components/demos/home.demo.ts?raw';
+
+const formHtml = `<form id="home-demo-form" novalidate>
+  <div>
+    <label for="home-login">Login</label>
+    <input id="home-login" name="login" type="text" data-validation="required;minLength(3)" />
+    <ul class="error-list"></ul>
+  </div>
+  <div>
+    <label for="home-password">Password</label>
+    <input id="home-password" name="password" type="password" data-validation="required;minLength(8)" />
+    <ul class="error-list"></ul>
+  </div>
+  <button type="submit">Sign in</button>
+</form>`;
+---
+<DocsLayout title="form-validator-js — Validation rules in HTML, no JavaScript schema" fullBleed>
+  <ThemeToggle slot="theme-toggle" />
+  <Hero />
+  <section id="demo" class="container-wide demo-anchor">
+    <h2>One demo</h2>
+    <p class="muted lede">The form below is wired with the library. Try submitting empty, then with `ab`. The JS imports it from npm, the rules live in `data-validation`.</p>
+  </section>
+  <LiveDemo formHtml={formHtml} jsSource={jsSource} jsFilename="home.demo.ts" />
+  <WhenThisFits />
+  <script>
+    import '~/components/demos/home.demo';
+  </script>
+</DocsLayout>
+
+<style>
+  .demo-anchor {
+    padding-top: var(--space-6);
+  }
+  .demo-anchor h2 { margin-bottom: var(--space-2); }
+  .demo-anchor .lede { margin-bottom: var(--space-3); max-width: 64ch; }
+</style>

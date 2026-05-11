@@ -1,0 +1,120 @@
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import ValidatorCard from '~/components/ValidatorCard.astro';
+import ThemeToggle from '~/components/ThemeToggle.astro';
+
+<DocsLayout title="Validators — form-validator-js">
+  <ThemeToggle slot="theme-toggle" />
+
+# Validators
+
+Ten built-in validators, listed alphabetically. Each is a `{ init, validate, errorMessage? }` object you spread into `validatorDeclarations` when constructing `FormValidator`.
+
+> "Text-like input" below means any of: `text`, `password`, `tel`, `email`, `url`, `search`, `number`, `date`, `time`, `datetime-local`, `month`, `week`, `color`, `range`, `hidden`. An `<input>` without a `type` attribute defaults to `text`.
+
+> `<input type="file">` is supported by `required` only — for real file validation (size, MIME, count) write a custom validator.
+
+<ValidatorCard
+  name="required"
+  dsl="required"
+  supports="Text-like input, <textarea>, <select>: non-empty value. Checkbox/radio: at least one in the group is checked. <input type=&quot;file&quot;>: a file is selected."
+  htmlExample={`<input data-validation="required" name="login">`}
+>
+  Most fundamental validator: rejects empty values. For groups (radio, checkbox), the rule applies once and is satisfied by any group member being checked.
+</ValidatorCard>
+
+<ValidatorCard
+  name="minLength"
+  dsl="minLength(3)"
+  argument="min character count"
+  supports="Text-like input or <textarea>."
+  htmlExample={`<input data-validation="minLength(3)" name="username">`}
+>
+  Counts UTF-16 code units to match the native `minlength` attribute. Empty values pass — combine with `required` to forbid empty.
+</ValidatorCard>
+
+<ValidatorCard
+  name="maxLength"
+  dsl="maxLength(20)"
+  argument="max character count"
+  supports="Text-like input or <textarea>."
+  htmlExample={`<input data-validation="maxLength(20)" name="title">`}
+>
+  Counts UTF-16 code units, matching native `maxlength`.
+</ValidatorCard>
+
+<ValidatorCard
+  name="pattern"
+  dsl="pattern(\\d{4})"
+  argument="regex source"
+  supports="Text-like input or <textarea>."
+  htmlExample={`<input data-validation="pattern(\\d{4})" name="pin">`}
+>
+  The regex is auto-anchored (`^(?:…)$`) so it must match the entire value, matching native `pattern`. Empty value passes — combine with `required` to forbid empty.
+</ValidatorCard>
+
+<ValidatorCard
+  name="equalsTo"
+  dsl="equalsTo(password)"
+  argument="id of another field"
+  supports="Any field referenced by id."
+  htmlExample={`<input id="password" type="password" data-validation="required">
+<input data-validation="equalsTo(password)" type="password" name="confirm">`}
+>
+  Cross-field equality, e.g. password confirmation. Strict `===` — Unicode normalization is **not** applied (`'café'` in NFC and NFD are not equal). Intentional, so password matching is byte-exact.
+</ValidatorCard>
+
+<ValidatorCard
+  name="checkedCount"
+  dsl="checkedCount(1,3)"
+  argument="min, max, or min,max"
+  supports="Checkbox or radio group (any input in the group can carry the data-validation)."
+  htmlExample={`<fieldset data-validation-context="checkedCount">
+  <input type="checkbox" name="opts" value="a" data-validation="checkedCount(1,3)">
+  <input type="checkbox" name="opts" value="b">
+  <input type="checkbox" name="opts" value="c">
+  <input type="checkbox" name="opts" value="d">
+</fieldset>`}
+>
+  Group min/max for checkboxes / radios. `,N` means up to N. `N,` means N or more. The error attaches to the context (here the fieldset) because group errors don't belong to any single member.
+</ValidatorCard>
+
+<ValidatorCard
+  name="numeric"
+  dsl="numeric"
+  supports="<input type=&quot;number&quot;>, date, time, month, week, datetime-local."
+  htmlExample={`<input type="number" data-validation="required;numeric" name="amount">`}
+>
+  Rejects unparseable input (`validity.badInput`, plus a defensive parse-side check). Empty value passes — compose with `required`.
+</ValidatorCard>
+
+<ValidatorCard
+  name="min"
+  dsl="min(10) / min(2026-01-01)"
+  argument="lower bound (parsed in the input's own format)"
+  supports="<input type=&quot;number&quot;>, date, time, month, week, datetime-local."
+  htmlExample={`<input type="date" data-validation="required;numeric;min(2026-01-01)" name="start">`}
+>
+  The bound is parsed in the input's own format — for `type="date"`, ISO-8601 (`YYYY-MM-DD`); for `type="time"`, `HH:MM[:SS]`; etc. Empty / bad-input passes (compose with `required` / `numeric`).
+</ValidatorCard>
+
+<ValidatorCard
+  name="max"
+  dsl="max(100) / max(2026-12-31)"
+  argument="upper bound (parsed in the input's own format)"
+  supports="<input type=&quot;number&quot;>, date, time, month, week, datetime-local."
+  htmlExample={`<input type="number" data-validation="required;numeric;max(100)" name="percentage">`}
+>
+  Same types as `min`. Empty / bad-input passes (compose with `required` / `numeric`).
+</ValidatorCard>
+
+<ValidatorCard
+  name="step"
+  dsl="step(0.5) / step(7, 2026-01-05) / step(900, 09:00)"
+  argument="step or step,base"
+  supports="<input type=&quot;number&quot;>, date, time, month, week, datetime-local."
+  htmlExample={`<input type="time" data-validation="required;numeric;step(900)" name="slot">`}
+>
+  Step is in the input type's natural unit: number = 1; date = 1 day; time = 1 second; month = 1 month; week = 1 week; datetime-local = 1 second. Default base is `0` — except `week`, where the base is the Monday of `1970-W01` so the grid lines up with valid week values. Compared within `1e-9` to absorb FP error. Empty / bad-input passes (compose with `required` / `numeric`).
+</ValidatorCard>
+
+</DocsLayout>

@@ -1,0 +1,92 @@
+---
+import { Code } from 'astro:components';
+
+interface Props {
+  code: string;
+  lang: 'html' | 'ts' | 'js' | 'css' | 'json' | 'sh';
+  filename?: string;
+}
+const { code, lang, filename } = Astro.props;
+---
+<figure class="code-block">
+  {filename && <figcaption class="label">{filename}</figcaption>}
+  <div class="code-pane">
+    <button type="button" class="copy-btn secondary" data-code={code} aria-label="Copy code">Copy</button>
+    <Code code={code} lang={lang} themes={{ light: 'github-light', dark: 'github-dark' }} />
+  </div>
+</figure>
+
+<style>
+  .code-block {
+    margin: var(--space-2) 0;
+  }
+  .code-block figcaption {
+    margin-bottom: var(--space-1);
+  }
+  .code-pane {
+    position: relative;
+    border: 1px solid var(--rule);
+    background: var(--bg-elev);
+  }
+  .code-pane :global(pre) {
+    margin: 0;
+    border: 0;
+    background: transparent;
+    padding: var(--space-2);
+    font-size: 0.875rem;
+    line-height: 1.55;
+    overflow-x: auto;
+  }
+  /* Explicit colors instead of inheriting from .secondary — Shiki's code-block
+     background (github-light #fff / github-dark #24292e) is independent of
+     our --bg-elev token, so a transparent button can look washed out. Use
+     opaque colors that read well over either Shiki theme. */
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0.75;
+    transition: opacity 150ms ease, color 150ms ease, border-color 150ms ease;
+    z-index: 1;
+  }
+  .code-pane:hover .copy-btn,
+  .copy-btn:focus { opacity: 1; }
+  .copy-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .copy-btn.copied {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const code = btn.dataset.code ?? '';
+      try {
+        await navigator.clipboard.writeText(code);
+        const original = btn.textContent;
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 1500);
+      } catch {
+        btn.textContent = 'Failed';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+      }
+    });
+  });
+</script>

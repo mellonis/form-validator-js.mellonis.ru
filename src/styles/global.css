@@ -1,0 +1,314 @@
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+
+/* === Design tokens (dark default) === */
+:root {
+  --bg: #0a0a0a;
+  --fg: #e5e5e5;
+  --accent: #f69e7b;
+  --muted: #71717a;
+  --rule: #262626;
+  --error: #f87171;
+  --bg-elev: #141414;       /* subtle elevation, e.g. code blocks on dark */
+
+  --font-display: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-body:    'Inter Variable', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --font-mono:    'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+  --space-8: 64px;
+
+  --content-max: 72ch;
+  --gutter-mobile: 24px;
+  --gutter-desktop: 64px;
+
+  color-scheme: dark;
+}
+
+/* === Light theme (manual or via prefers-color-scheme) === */
+[data-theme='light'] {
+  --bg: #fafaf7;
+  --fg: #0a0a0a;
+  --rule: #e7e5e4;
+  --error: #dc2626;
+  --bg-elev: #f5f5f4;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --bg: #fafaf7;
+    --fg: #0a0a0a;
+    --rule: #e7e5e4;
+    --error: #dc2626;
+    --bg-elev: #f5f5f4;
+    color-scheme: light;
+  }
+}
+
+/* === Reset === */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { background: var(--bg); color: var(--fg); }
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  font-feature-settings: "ss01";
+  min-height: 100vh;
+  /* Avoids orphans (a single word on the last line of a paragraph) by
+     adjusting line breaks intelligently. Progressive enhancement — older
+     browsers ignore it and use default wrapping. */
+  text-wrap: pretty;
+}
+
+/* === Type scale === */
+h1, h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  /* Balances line lengths in multi-line headings so the last line isn't
+     a lonely short word. Progressive enhancement; falls back gracefully. */
+  text-wrap: balance;
+}
+h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+h1 { font-size: clamp(2rem, 5vw, 3rem); }
+h2 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); }
+h3 { font-size: 1.25rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+p, li { max-width: var(--content-max); }
+strong { font-weight: 500; }
+small { color: var(--muted); font-size: 0.875rem; }
+
+/* === Prose rhythm (vertical spacing for content pages) ===
+   Scoped to .main-prose direct children so component-internal layouts
+   (Hero, LiveDemo, ValidatorCard, etc.) keep their own spacing. */
+.main-prose > h1 { margin-bottom: var(--space-3); }
+.main-prose > h2 { margin-top: var(--space-6); margin-bottom: var(--space-2); }
+.main-prose > h3 { margin-top: var(--space-4); margin-bottom: var(--space-1); }
+.main-prose > h4 { margin-top: var(--space-3); margin-bottom: var(--space-1); }
+.main-prose > h2:first-child,
+.main-prose > h3:first-child,
+.main-prose > h4:first-child { margin-top: 0; }
+.main-prose > p,
+.main-prose > ul,
+.main-prose > ol,
+.main-prose > pre,
+.main-prose > figure,
+.main-prose > table,
+.main-prose > blockquote { margin-bottom: var(--space-2); }
+.main-prose > ul,
+.main-prose > ol { padding-left: var(--space-3); }
+.main-prose > ul > li,
+.main-prose > ol > li { margin-bottom: 4px; }
+.main-prose > blockquote {
+  border-left: 2px solid var(--accent);
+  padding-left: var(--space-2);
+  color: var(--muted);
+}
+
+/* === Tables (prose) ===
+   Desktop: standard table grid. Mobile: stacked card-per-row with column
+   labels injected via :before so each cell knows what it is. The current
+   site has one prose table (API Parameters: Param / Type / Default / Notes);
+   the nth-child labels below assume that shape. Add a per-table override
+   if a different schema lands later. */
+.main-prose > table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+}
+.main-prose > table th,
+.main-prose > table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+  white-space: normal;
+}
+.main-prose > table th {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom-color: var(--fg);
+  white-space: nowrap;
+}
+
+/* Mobile stacked layout. Hide the THEAD, render each TR as a block, each
+   TD as a row with a small column label prefix. */
+@media (max-width: 767px) {
+  .main-prose > table {
+    display: block;
+  }
+  .main-prose > table thead { display: none; }
+  .main-prose > table tbody,
+  .main-prose > table tr,
+  .main-prose > table td {
+    display: block;
+    width: 100%;
+  }
+  .main-prose > table tr {
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .main-prose > table tr:last-child { border-bottom: 0; }
+  .main-prose > table td {
+    padding: 0;
+    border: 0;
+    margin-top: 8px;
+  }
+  .main-prose > table td:first-child {
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+  .main-prose > table td:not(:first-child):before {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .main-prose > table td:nth-child(2):before { content: 'Type'; }
+  .main-prose > table td:nth-child(3):before { content: 'Default'; }
+  .main-prose > table td:nth-child(4):before { content: 'Notes'; }
+}
+
+/* === Links === */
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  transition: opacity 150ms ease;
+}
+a:hover { opacity: 0.7; }
+
+/* === Code === */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--bg-elev);
+  padding: 1px 5px;
+  border-radius: 2px;
+  /* Long inline signatures (e.g. updateValidationParameters(elementSelector,
+     validatorName, argumentString)) should break to fit narrow viewports
+     instead of pushing the page wider. Pre-formatted blocks (<pre><code>)
+     keep their natural single-line behavior with horizontal scroll. */
+  overflow-wrap: anywhere;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  overflow-wrap: normal;  /* code blocks scroll horizontally, no wrap */
+}
+pre {
+  background: var(--bg-elev);
+  border: 1px solid var(--rule);
+  padding: var(--space-2);
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+/* === Rules / separators === */
+hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: var(--space-4) 0;
+}
+
+/* === Buttons === */
+button, .button {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: var(--accent);
+  color: #0a0a0a;
+  border: 0;
+  padding: 10px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+button:hover, .button:hover { opacity: 0.85; }
+button.secondary, .button.secondary {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--rule);
+}
+
+/* === Form-validator default error styling === */
+.error-list {
+  list-style: none;
+  padding: 4px 0 0 0;
+  margin: 0;
+  color: var(--error);
+  font-size: 0.875rem;
+}
+.error-list li { padding: 2px 0; }
+
+input[aria-invalid="true"], textarea[aria-invalid="true"], select[aria-invalid="true"] {
+  border-color: var(--error);
+}
+
+/* === Layout primitives === */
+.container {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 var(--gutter-mobile);
+}
+.container-wide {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--gutter-mobile);
+}
+
+@media (min-width: 768px) {
+  .container, .container-wide {
+    padding: 0 var(--gutter-desktop);
+  }
+}
+
+/* === Utility === */
+.muted { color: var(--muted); }
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* === Skip link (a11y) === */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+}
+.skip-link:focus {
+  position: fixed;
+  left: 8px;
+  top: 8px;
+  background: var(--bg);
+  color: var(--fg);
+  padding: 8px 12px;
+  border: 1px solid var(--rule);
+  z-index: 100;
+}

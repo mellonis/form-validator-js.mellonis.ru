@@ -1,0 +1,85 @@
+---
+const modes = [
+  { key: 'input', label: 'input', desc: 'Validates on every keystroke.' },
+  { key: 'blur', label: 'blur', desc: 'Validates only on focus loss.' },
+  { key: 'blur-then-input', label: 'blur-then-input (default)', desc: 'Like blur, then eagerly on input once an error has been shown.' },
+  { key: 'submit-only', label: 'submit-only', desc: 'Validates only on submit.' },
+];
+---
+<section class="trigger-comparison">
+  <p class="muted lede">Same form, four trigger modes. Type "ab" in each — feel the difference.</p>
+  <div class="trigger-grid">
+    {modes.map(({ key, label, desc }) => (
+      <article class="trigger-cell">
+        <header>
+          <h4><code>{label}</code></h4>
+          <p class="muted">{desc}</p>
+        </header>
+        <form data-trigger-form={key} novalidate>
+          <label>Username</label>
+          <input name="username" type="text" data-validation="required;minLength(3)" />
+          <ul class="error-list"></ul>
+          <button type="submit">Submit</button>
+        </form>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .trigger-comparison { margin: var(--space-4) 0; }
+  .trigger-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  @media (min-width: 700px) {
+    .trigger-grid { grid-template-columns: 1fr 1fr; }
+  }
+  .trigger-cell {
+    border: 1px solid var(--rule);
+    padding: var(--space-2);
+  }
+  .trigger-cell h4 { margin: 0; }
+  .trigger-cell p { font-size: 0.875rem; margin: 4px 0 var(--space-2); }
+  .trigger-cell form { display: flex; flex-direction: column; gap: 6px; }
+  .trigger-cell label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .trigger-cell input {
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--rule);
+    padding: 6px 10px;
+  }
+</style>
+
+<script>
+  import { FormValidator } from '@form-validator-js/core';
+  import { required, minLength } from '@form-validator-js/validators';
+
+  type TriggerMode = 'input' | 'blur' | 'blur-then-input' | 'submit-only';
+
+  document.querySelectorAll<HTMLFormElement>('form[data-trigger-form]').forEach((form) => {
+    const trigger = form.dataset.triggerForm as TriggerMode;
+    new FormValidator({
+      form,
+      trigger,
+      validatorDeclarations: {
+        required:  { ...required,  errorMessage: 'Required' },
+        minLength: { ...minLength, errorMessage: 'Too short' },
+      },
+      onErrorMessageListChanged(target, errors) {
+        if (target === form) return;
+        const list = (target as HTMLElement).parentElement?.querySelector('.error-list');
+        if (!list) return;
+        list.innerHTML = errors.map((m) => `<li>${m}</li>`).join('');
+      },
+    });
+    form.addEventListener('submit', (e) => e.preventDefault());
+  });
+</script>

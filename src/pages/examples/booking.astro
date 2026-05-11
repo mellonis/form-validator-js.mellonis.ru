@@ -1,0 +1,53 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import ThemeToggle from '~/components/ThemeToggle.astro';
+import LiveDemo from '~/components/LiveDemo.astro';
+import jsSource from '~/components/demos/booking.demo.ts?raw';
+
+const formHtml = `<form id="booking-form" novalidate>
+  <div>
+    <label for="booking-date">Date</label>
+    <input id="booking-date" name="date" type="date"
+           data-validation="required;numeric" />
+    <ul class="error-list"></ul>
+    <small>Bounds (today and today + 30 days) are injected by the JS at runtime.</small>
+  </div>
+  <div>
+    <label for="booking-time">Time</label>
+    <input id="booking-time" name="time" type="time"
+           data-validation="required;numeric;min(09:00);max(18:00);step(1800)" />
+    <ul class="error-list"></ul>
+    <small>09:00–18:00, on the half-hour. <code>step</code> takes seconds for type=time.</small>
+  </div>
+  <div>
+    <label for="booking-party">Party size</label>
+    <input id="booking-party" name="party" type="number"
+           data-validation="required;numeric;min(1);max(8);step(1)" />
+    <ul class="error-list"></ul>
+  </div>
+  <button type="submit">Reserve</button>
+</form>`;
+---
+<DocsLayout title="Booking — form-validator-js" fullBleed>
+  <ThemeToggle slot="theme-toggle" />
+  <section class="container-wide page-header">
+    <p class="label">Example</p>
+    <h1>Booking</h1>
+    <p class="muted lede">
+      Date and time inputs with bounds and step. The lib parses each value in the input's
+      own format — no hand-rolled date math. Validators stressed:
+      <code>numeric</code>, <code>min</code>, <code>max</code>, <code>step</code>.
+    </p>
+  </section>
+  <LiveDemo formHtml={formHtml} jsSource={jsSource} jsFilename="booking.demo.ts" htmlFilename="booking.html" />
+  <script>
+    import '~/components/demos/booking.demo';
+  </script>
+</DocsLayout>
+
+<style>
+  .page-header { padding-top: var(--space-6); padding-bottom: var(--space-2); }
+  .page-header h1 { margin-bottom: var(--space-2); }
+  .page-header .lede { max-width: 64ch; }
+  .form-host :global(small) { display: block; margin-top: 4px; color: var(--muted); font-size: 0.75rem; }
+</style>

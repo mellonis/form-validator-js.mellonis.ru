@@ -1,0 +1,116 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import ThemeToggle from '~/components/ThemeToggle.astro';
+
+const examples = [
+  {
+    href: '/examples/signup',
+    title: 'Sign up',
+    validators: 'required · minLength · pattern · equalsTo',
+    description: 'Email, username, password with confirmation. The classic — every form-validation library has to do this one.',
+  },
+  {
+    href: '/examples/booking',
+    title: 'Booking',
+    validators: 'numeric · min · max · step',
+    description: 'Native date and time inputs with bounds and step. The library parses each value in the input’s own format — no hand-rolled date math.',
+  },
+  {
+    href: '/examples/wizard',
+    title: 'Multi-step wizard',
+    validators: 'data-validation-context scoping',
+    description: 'Three steps, each its own validation context. The “Next” button manually triggers validation via createValidateEvent and only advances when the visible step is valid.',
+  },
+  {
+    href: '/examples/async',
+    title: 'Async username',
+    validators: 'Promise-returning validate · onPendingChange · AbortSignal',
+    description: 'A custom validator returns a Promise that fetches the public JSONPlaceholder /users endpoint. The engine awaits it on submit, cancels stale checks via AbortSignal, and reports pending state through onPendingChange. New in 1.1.0.',
+  },
+];
+---
+<DocsLayout title="Examples — form-validator-js" fullBleed>
+  <ThemeToggle slot="theme-toggle" />
+  <section class="container-wide page-header">
+    <p class="label">Gallery</p>
+    <h1>Examples</h1>
+    <p class="muted lede">
+      Four live demos showing the library against real-world form shapes. Each one is wired
+      with the actual <code>FormValidator</code>; the displayed snippet is the running code.
+    </p>
+  </section>
+  <section class="container-wide example-grid">
+    {examples.map(({ href, title, validators, description }) => (
+      <a href={href} class="example-card">
+        <p class="label card-validators">{validators}</p>
+        <h2>{title}</h2>
+        <p class="card-desc">{description}</p>
+        <span class="card-arrow" aria-hidden="true">→</span>
+      </a>
+    ))}
+  </section>
+</DocsLayout>
+
+<style>
+  .page-header { padding-top: var(--space-6); padding-bottom: var(--space-2); }
+  .page-header h1 { margin-bottom: var(--space-2); }
+  .page-header .lede { max-width: 64ch; }
+
+  .example-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-bottom: var(--space-8);
+    border-top: 1px solid var(--rule);
+  }
+  @media (min-width: 760px) {
+    .example-grid { grid-template-columns: 1fr 1fr; }
+  }
+  .example-card {
+    display: block;
+    color: var(--fg);
+    text-decoration: none;
+    /* Right gutter (--space-4) reserves a 32px column for the arrow so
+       content never overlaps it on any viewport. */
+    padding: var(--space-4) var(--space-4) var(--space-4) 0;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+    transition: background 150ms ease;
+  }
+  /* Right column gets a left rule on desktop only; bottom row has no bottom rule. */
+  @media (min-width: 760px) {
+    .example-card:nth-child(2n) { padding-left: var(--space-4); border-left: 1px solid var(--rule); }
+    .example-card:nth-last-child(-n+2) { border-bottom: 0; }
+  }
+  /* Hover: shift the title to accent and nudge the arrow. No background fill —
+     a full-bleed rectangle into the padding zone (where the arrow lives)
+     reads as a clunky block rather than a card highlight. */
+  .example-card:hover h2 { color: var(--accent); }
+  .example-card:hover .card-arrow { transform: translateX(4px); }
+
+  .card-validators {
+    margin: 0 0 var(--space-2);
+    color: var(--accent);
+  }
+  .example-card h2 {
+    font-size: 1.5rem;
+    margin: 0 0 var(--space-2);
+  }
+  .card-desc {
+    color: var(--muted);
+    margin: 0;
+    max-width: 56ch;
+    line-height: 1.55;
+  }
+  .card-arrow {
+    position: absolute;
+    top: var(--space-4);
+    /* Inset from card right edge so the arrow has breathing room
+       instead of butting against the container or column rule. */
+    right: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    color: var(--accent);
+    transition: transform 150ms ease;
+  }
+</style>

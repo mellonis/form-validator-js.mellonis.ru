@@ -1,0 +1,40 @@
+---
+---
+<button id="theme-toggle" type="button" class="secondary" aria-label="Toggle theme">
+  <span class="theme-toggle-icon" aria-hidden="true">◐</span>
+  <span class="visually-hidden">Theme</span>
+</button>
+
+<style>
+  #theme-toggle {
+    padding: 6px 10px;
+    font-size: 1rem;
+    line-height: 1;
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--fg);
+  }
+  #theme-toggle:hover { color: var(--accent); }
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+</style>
+
+<script>
+  import { toggleTheme, getEffectiveTheme } from '~/lib/theme';
+
+  const btn = document.getElementById('theme-toggle');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const next = toggleTheme();
+      btn.setAttribute('aria-label', `Switch to ${next === 'dark' ? 'light' : 'dark'} theme`);
+    });
+    // Initial label
+    const current = getEffectiveTheme();
+    btn.setAttribute('aria-label', `Switch to ${current === 'dark' ? 'light' : 'dark'} theme`);
+  }
+</script>

@@ -1,0 +1,48 @@
+---
+import { libVersion } from '~/lib/lib-version';
+---
+<section class="hero container-wide">
+  <p class="label hero-eyebrow">v{libVersion} · MIT · zero deps</p>
+  <h1 class="hero-headline">
+    Validation rules in HTML.<br />
+    <span class="muted-headline">No JavaScript schema.</span>
+  </h1>
+  <p class="hero-sub">
+    Declarative <code>data-*</code> attribute rules for server-rendered apps,
+    HTMX/Alpine, and no-build static sites.
+  </p>
+  <div class="hero-actions">
+    <a href="#demo" class="button">See it work ↓</a>
+    <a href="/validators/" class="button secondary">Read the docs</a>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--rule);
+  }
+  .hero-eyebrow {
+    margin-bottom: var(--space-3);
+    color: var(--accent);
+  }
+  .hero-headline {
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    margin-bottom: var(--space-3);
+    max-width: 18ch;
+  }
+  .muted-headline { color: var(--muted); }
+  .hero-sub {
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    color: var(--muted);
+    max-width: 56ch;
+    margin-bottom: var(--space-4);
+    line-height: 1.55;
+  }
+  .hero-actions {
+    display: flex;
+    gap: var(--space-1);
+    flex-wrap: wrap;
+  }
+</style>

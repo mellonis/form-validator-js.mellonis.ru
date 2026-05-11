@@ -1,0 +1,38 @@
+---
+---
+<section class="when-fits container-wide">
+  <h2>When this fits, when it doesn't</h2>
+  <p class="lede">
+    This is the Parsley.js / jQuery Validate style: rules go in HTML, JS just wires up the engine. Good for:
+  </p>
+  <ul>
+    <li>Server-rendered apps with light JS (Rails/Hotwire, Django, Laravel, plain HTML + HTMX, Alpine).</li>
+    <li>No-build static sites.</li>
+    <li>Codebases that don't already have a form-state library.</li>
+  </ul>
+  <p class="aside">
+    If you're on a component framework with state-managed forms (React, Vue, Svelte, Solid), reach for
+    <a href="https://react-hook-form.com/"><code>react-hook-form</code></a> +
+    <a href="https://zod.dev/"><code>zod</code></a>,
+    <a href="https://tanstack.com/form/latest"><code>@tanstack/form</code></a> +
+    <a href="https://valibot.dev/"><code>valibot</code></a>, or similar.
+    Schema-first validation with full TypeScript inference is a better fit there.
+  </p>
+</section>
+
+<style>
+  .when-fits {
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--rule);
+  }
+  .lede { margin-bottom: var(--space-2); }
+  .when-fits ul { margin: 0 0 var(--space-3) var(--space-3); }
+  .when-fits li { margin-bottom: 4px; }
+  .aside {
+    border-left: 2px solid var(--accent);
+    padding-left: var(--space-2);
+    color: var(--muted);
+    max-width: 64ch;
+  }
+</style>

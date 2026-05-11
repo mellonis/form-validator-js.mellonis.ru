@@ -1,0 +1,48 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import ThemeToggle from '~/components/ThemeToggle.astro';
+import LiveDemo from '~/components/LiveDemo.astro';
+import jsSource from '~/components/demos/async.demo.ts?raw';
+
+const formHtml = `<form id="async-form" novalidate>
+  <div>
+    <label for="async-username">Username</label>
+    <input id="async-username" name="username" type="text"
+           data-validation="required;minLength(3);uniqueUsername" autocomplete="off" />
+    <p id="async-status" class="muted async-status" aria-live="polite"></p>
+    <ul class="error-list"></ul>
+    <small>Try <code>Bret</code>, <code>Antonette</code>, or <code>Samantha</code> (all taken in the fixture).</small>
+  </div>
+  <button type="submit">Sign up</button>
+</form>`;
+---
+<DocsLayout title="Async — form-validator-js" fullBleed>
+  <ThemeToggle slot="theme-toggle" />
+  <section class="container-wide page-header">
+    <p class="label">Example</p>
+    <h1>Async username availability</h1>
+    <p class="muted lede">
+      A custom <code>uniqueUsername</code> validator that returns a <code>Promise</code> —
+      the engine awaits it at submit, cancels stale checks via the
+      <code>AbortSignal</code> in <code>options.signal</code>, and surfaces in-flight state
+      through <code>onPendingChange</code>. <strong>New in 1.1.0.</strong> Real
+      <code>fetch</code> against the public
+      <a href="https://jsonplaceholder.typicode.com/users">JSONPlaceholder <code>/users</code></a>
+      endpoint; CORS is open, so the request runs straight from the browser.
+    </p>
+  </section>
+  <LiveDemo formHtml={formHtml} jsSource={jsSource} jsFilename="async.demo.ts" htmlFilename="async.html" />
+  <script>
+    import '~/components/demos/async.demo';
+  </script>
+</DocsLayout>
+
+<style>
+  .page-header { padding-top: var(--space-6); padding-bottom: var(--space-2); }
+  .page-header h1 { margin-bottom: var(--space-2); }
+  .page-header .lede { max-width: 64ch; }
+  .form-host :global(.async-status) {
+    font-size: 0.875rem;
+    margin-top: 4px;
+  }
+</style>

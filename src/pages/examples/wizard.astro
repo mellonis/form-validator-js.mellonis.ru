@@ -1,0 +1,121 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import ThemeToggle from '~/components/ThemeToggle.astro';
+import LiveDemo from '~/components/LiveDemo.astro';
+import jsSource from '~/components/demos/wizard.demo.ts?raw';
+
+const formHtml = `<form id="wizard-form" novalidate>
+  <p class="wizard-progress label" aria-live="polite"></p>
+
+  <fieldset data-step="profile" data-validation-context="*">
+    <legend>Profile</legend>
+    <div>
+      <label for="wiz-name">Full name</label>
+      <input id="wiz-name" name="name" type="text" data-validation="required;minLength(2)" />
+      <ul class="error-list"></ul>
+    </div>
+    <div>
+      <label for="wiz-email">Email</label>
+      <input id="wiz-email" name="email" type="email"
+             data-validation="required;pattern([^@\\s]+@[^@\\s]+\\.[^@\\s]+)" />
+      <ul class="error-list"></ul>
+    </div>
+  </fieldset>
+
+  <fieldset data-step="address" data-validation-context="*" hidden>
+    <legend>Address</legend>
+    <div>
+      <label for="wiz-street">Street</label>
+      <input id="wiz-street" name="street" type="text" data-validation="required" />
+      <ul class="error-list"></ul>
+    </div>
+    <div>
+      <label for="wiz-city">City</label>
+      <input id="wiz-city" name="city" type="text" data-validation="required" />
+      <ul class="error-list"></ul>
+    </div>
+  </fieldset>
+
+  <fieldset data-step="review" data-validation-context="*" hidden>
+    <legend>Review</legend>
+    <dl class="wizard-review"></dl>
+    <p class="muted">Click submit to finalize.</p>
+  </fieldset>
+
+  <div class="wizard-actions">
+    <button type="button" data-action="back" class="secondary">Back</button>
+    <button type="button" data-action="next">Next</button>
+    <button type="submit">Submit</button>
+  </div>
+</form>`;
+---
+<DocsLayout title="Wizard — form-validator-js" fullBleed>
+  <ThemeToggle slot="theme-toggle" />
+  <section class="container-wide page-header">
+    <p class="label">Example</p>
+    <h1>Multi-step wizard</h1>
+    <p class="muted lede">
+      Each step is a <code>&lt;fieldset data-validation-context="*"&gt;</code> — errors scope per
+      step. The "Next" button manually triggers validation via
+      <code>FormValidator.createValidateEvent()</code> before advancing.
+    </p>
+  </section>
+  <LiveDemo formHtml={formHtml} jsSource={jsSource} jsFilename="wizard.demo.ts" htmlFilename="wizard.html" />
+  <script>
+    import '~/components/demos/wizard.demo';
+  </script>
+</DocsLayout>
+
+<style>
+  .page-header { padding-top: var(--space-6); padding-bottom: var(--space-2); }
+  .page-header h1 { margin-bottom: var(--space-2); }
+  .page-header .lede { max-width: 64ch; }
+  .form-host :global(fieldset) {
+    border: 1px solid var(--rule);
+    padding: var(--space-2);
+    margin: 0;
+  }
+  .form-host :global(legend) {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 8px;
+  }
+  .form-host :global(.wizard-progress) {
+    margin-bottom: var(--space-2);
+    color: var(--accent);
+  }
+  .form-host :global(.wizard-actions) {
+    display: flex;
+    gap: var(--space-1);
+    margin-top: var(--space-3);
+  }
+  .form-host :global(button[type="submit"]) {
+    margin-left: auto;
+  }
+  .form-host :global(.wizard-review) {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px var(--space-2);
+    margin: 0 0 var(--space-2);
+    font-size: 0.9rem;
+  }
+  .form-host :global(.wizard-review dt) {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 2px;
+  }
+  .form-host :global(.wizard-review dd) {
+    margin: 0;
+    word-break: break-word;
+  }
+  .form-host :global(.wizard-review .empty) {
+    color: var(--muted);
+    font-style: italic;
+  }
+</style>

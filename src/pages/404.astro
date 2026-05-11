@@ -1,0 +1,74 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import ThemeToggle from '~/components/ThemeToggle.astro';
+---
+<DocsLayout title="Not found — form-validator-js" fullBleed>
+  <ThemeToggle slot="theme-toggle" />
+  <section class="error-page container-wide">
+    <p class="label error-eyebrow">HTTP 404</p>
+    <h1 class="error-headline">
+      Not found.<br />
+      <span class="muted-headline">This URL leads nowhere.</span>
+    </h1>
+    <p class="error-sub">
+      The page you were looking for either moved or never existed. Try one of the routes below.
+    </p>
+    <ul class="error-nav">
+      <li><a href="/">Home</a></li>
+      <li><a href="/validators/">Validators</a></li>
+      <li><a href="/examples/">Examples</a></li>
+      <li><a href="/api/">API</a></li>
+    </ul>
+  </section>
+</DocsLayout>
+
+<style>
+  .error-page {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
+    min-height: 60vh;
+  }
+  .error-eyebrow {
+    margin-bottom: var(--space-3);
+    color: var(--accent);
+  }
+  .error-headline {
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    margin-bottom: var(--space-3);
+    max-width: 22ch;
+  }
+  .muted-headline { color: var(--muted); }
+  .error-sub {
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    color: var(--muted);
+    max-width: 56ch;
+    margin-bottom: var(--space-4);
+    line-height: 1.55;
+  }
+  .error-nav {
+    display: flex;
+    gap: var(--space-1);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+  }
+  .error-nav li { margin: 0; }
+  .error-nav a {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 10px 18px;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--fg);
+    transition: opacity 150ms ease, border-color 150ms ease;
+  }
+  .error-nav a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    opacity: 1;
+  }
+</style>
